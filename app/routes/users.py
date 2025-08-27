@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.user import User
+from app.models.user import UserModel
 from app.schemas.user import UserCreate, User, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -29,11 +29,11 @@ router = APIRouter(prefix="/users", tags=["users"])
 )
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Проверяем, существует ли пользователь с таким telegram_id
-    db_user = db.query(User).filter(User.telegram_id == user.telegram_id).first()
+    db_user = db.query(UserModel).filter(UserModel.telegram_id == user.telegram_id).first()
     if db_user:
         raise HTTPException(status_code=400, detail="User already exists")
     
-    db_user = User(**user.dict())
+    db_user = UserModel(**user.dict())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -58,7 +58,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """
 )
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = db.query(User).offset(skip).limit(limit).all()
+    users = db.query(UserModel).offset(skip).limit(limit).all()
     return users
 
 @router.get(
@@ -68,7 +68,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     description="""
     Возвращает информацию о пользователе по его внутреннему ID.
     
-    **Параметры пути:**
+    **Параметры пути:"
     - user_id: Внутренний идентификатор пользователя в системе
     
     **Возвращает:**
@@ -82,7 +82,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
 )
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
@@ -109,7 +109,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     """
 )
 def read_user_by_telegram(telegram_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    db_user = db.query(UserModel).filter(UserModel.telegram_id == telegram_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
@@ -139,7 +139,7 @@ def read_user_by_telegram(telegram_id: int, db: Session = Depends(get_db)):
     """
 )
 def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -173,7 +173,7 @@ def update_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
     """
 )
 def delete_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     

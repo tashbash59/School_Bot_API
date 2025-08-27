@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.attachment import Attachment
+from app.models.attachment import AttachmentModel
 from app.schemas.attachment import AttachmentCreate, Attachment, AttachmentUpdate
 
 router = APIRouter(prefix="/attachments", tags=["attachments"])
@@ -33,7 +33,7 @@ router = APIRouter(prefix="/attachments", tags=["attachments"])
     """
 )
 def create_attachment(attachment: AttachmentCreate, db: Session = Depends(get_db)):
-    db_attachment = Attachment(**attachment.dict())
+    db_attachment = AttachmentModel(**attachment.dict())
     db.add(db_attachment)
     db.commit()
     db.refresh(db_attachment)
@@ -59,7 +59,7 @@ def create_attachment(attachment: AttachmentCreate, db: Session = Depends(get_db
     """
 )
 def read_attachments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    attachments = db.query(Attachment).offset(skip).limit(limit).all()
+    attachments = db.query(AttachmentModel).offset(skip).limit(limit).all()
     return attachments
 
 @router.get(
@@ -83,7 +83,7 @@ def read_attachments(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     """
 )
 def read_attachment(attachment_id: int, db: Session = Depends(get_db)):
-    db_attachment = db.query(Attachment).filter(Attachment.id == attachment_id).first()
+    db_attachment = db.query(AttachmentModel).filter(AttachmentModel.id == attachment_id).first()
     if db_attachment is None:
         raise HTTPException(status_code=404, detail="Attachment not found")
     return db_attachment
@@ -104,12 +104,12 @@ def read_attachment(attachment_id: int, db: Session = Depends(get_db)):
     **Использование:**
     - GET /attachments/homework/456
     
-    **Примечание:**
+    **Примечание:"
     Возвращает пустой список, если для задания нет вложений.
     """
 )
 def read_homework_attachments(homework_id: int, db: Session = Depends(get_db)):
-    attachments = db.query(Attachment).filter(Attachment.homework_id == homework_id).all()
+    attachments = db.query(AttachmentModel).filter(AttachmentModel.homework_id == homework_id).all()
     return attachments
 
 @router.put(
@@ -142,7 +142,7 @@ def read_homework_attachments(homework_id: int, db: Session = Depends(get_db)):
     """
 )
 def update_attachment(attachment_id: int, attachment: AttachmentUpdate, db: Session = Depends(get_db)):
-    db_attachment = db.query(Attachment).filter(Attachment.id == attachment_id).first()
+    db_attachment = db.query(AttachmentModel).filter(AttachmentModel.id == attachment_id).first()
     if db_attachment is None:
         raise HTTPException(status_code=404, detail="Attachment not found")
     
@@ -181,7 +181,7 @@ def update_attachment(attachment_id: int, attachment: AttachmentUpdate, db: Sess
     """
 )
 def delete_attachment(attachment_id: int, db: Session = Depends(get_db)):
-    db_attachment = db.query(Attachment).filter(Attachment.id == attachment_id).first()
+    db_attachment = db.query(AttachmentModel).filter(AttachmentModel.id == attachment_id).first()
     if db_attachment is None:
         raise HTTPException(status_code=404, detail="Attachment not found")
     

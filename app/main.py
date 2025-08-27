@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from app.database import engine, Base
 from app.routes import users, groups, homeworks, attachments, user_groups
 
-# Создаем таблицы
+# Пересоздаем таблицы
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(

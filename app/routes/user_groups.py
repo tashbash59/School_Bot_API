@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.user_group import UserGroup
+from app.models.user_group import UserGroupModel
 from app.schemas.user_group import UserGroupCreate, UserGroup
 
 router = APIRouter(prefix="/user-groups", tags=["user_groups"])
@@ -31,15 +31,15 @@ router = APIRouter(prefix="/user-groups", tags=["user_groups"])
 )
 def add_user_to_group(user_group: UserGroupCreate, db: Session = Depends(get_db)):
     # Проверяем, существует ли уже такая связь
-    db_user_group = db.query(UserGroup).filter(
-        UserGroup.user_id == user_group.user_id,
-        UserGroup.group_id == user_group.group_id
+    db_user_group = db.query(UserGroupModel).filter(
+        UserGroupModel.user_id == user_group.user_id,
+        UserGroupModel.group_id == user_group.group_id
     ).first()
     
     if db_user_group:
         raise HTTPException(status_code=400, detail="User already in group")
     
-    db_user_group = UserGroup(**user_group.dict())
+    db_user_group = UserGroupModel(**user_group.dict())
     db.add(db_user_group)
     db.commit()
     db.refresh(db_user_group)
@@ -50,7 +50,7 @@ def add_user_to_group(user_group: UserGroupCreate, db: Session = Depends(get_db)
     response_model=List[UserGroup],
     summary="Получить все связи пользователей и групп",
     description="""
-    Возвращает список всех связей между пользователями и группами с пагинацией.
+    Возвращает список всех связей между пользователями и группами с пагинации.
     
     **Параметры запроса:**
     - skip: Количество записей для пропуска (по умолчанию 0)
@@ -65,7 +65,7 @@ def add_user_to_group(user_group: UserGroupCreate, db: Session = Depends(get_db)
     """
 )
 def read_user_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    user_groups = db.query(UserGroup).offset(skip).limit(limit).all()
+    user_groups = db.query(UserGroupModel).offset(skip).limit(limit).all()
     return user_groups
 
 @router.get(
@@ -78,7 +78,7 @@ def read_user_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     **Параметры пути:**
     - user_id: ID пользователя
     
-    **Возвращает:**
+    **Возвращает:"
     - Список связей пользователь-группа для указанного пользователя
     
     **Ошибки:**
@@ -89,7 +89,7 @@ def read_user_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     """
 )
 def read_user_groups_by_user(user_id: int, db: Session = Depends(get_db)):
-    user_groups = db.query(UserGroup).filter(UserGroup.user_id == user_id).all()
+    user_groups = db.query(UserGroupModel).filter(UserGroupModel.user_id == user_id).all()
     return user_groups
 
 @router.get(
@@ -113,7 +113,7 @@ def read_user_groups_by_user(user_id: int, db: Session = Depends(get_db)):
     """
 )
 def read_group_users(group_id: int, db: Session = Depends(get_db)):
-    user_groups = db.query(UserGroup).filter(UserGroup.group_id == group_id).all()
+    user_groups = db.query(UserGroupModel).filter(UserGroupModel.group_id == group_id).all()
     return user_groups
 
 @router.get(
@@ -138,9 +138,9 @@ def read_group_users(group_id: int, db: Session = Depends(get_db)):
     """
 )
 def read_user_group(user_id: int, group_id: int, db: Session = Depends(get_db)):
-    user_group = db.query(UserGroup).filter(
-        UserGroup.user_id == user_id,
-        UserGroup.group_id == group_id
+    user_group = db.query(UserGroupModel).filter(
+        UserGroupModel.user_id == user_id,
+        UserGroupModel.group_id == group_id
     ).first()
     
     if user_group is None:
@@ -173,9 +173,9 @@ def read_user_group(user_id: int, group_id: int, db: Session = Depends(get_db)):
     """
 )
 def update_user_group_role(user_id: int, group_id: int, user_role: str, db: Session = Depends(get_db)):
-    user_group = db.query(UserGroup).filter(
-        UserGroup.user_id == user_id,
-        UserGroup.group_id == group_id
+    user_group = db.query(UserGroupModel).filter(
+        UserGroupModel.user_id == user_id,
+        UserGroupModel.group_id == group_id
     ).first()
     
     if user_group is None:
@@ -205,18 +205,18 @@ def update_user_group_role(user_id: int, group_id: int, user_role: str, db: Sess
     **Ошибки:**
     - 404: Пользователь не найден в указанной группе
     
-    **Использование:**
+    **Использование:"
     - DELETE /user-groups/123/456
     
     **Примечание:**
     Удаление пользователя из группы может повлиять на его доступ к материалам
-    и функциональности, связанной с этой группой.
+    и функциональности, связанной с этой группе.
     """
 )
 def remove_user_from_group(user_id: int, group_id: int, db: Session = Depends(get_db)):
-    user_group = db.query(UserGroup).filter(
-        UserGroup.user_id == user_id,
-        UserGroup.group_id == group_id
+    user_group = db.query(UserGroupModel).filter(
+        UserGroupModel.user_id == user_id,
+        UserGroupModel.group_id == group_id
     ).first()
     
     if user_group is None:

@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-class Attachment(Base):
+class AttachmentModel(Base):
     __tablename__ = "attachments"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -15,4 +15,4 @@ class Attachment(Base):
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    homework = relationship("Homework", back_populates="attachments")
+    homework = relationship("HomeworkModel", back_populates="attachments")

@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-class Homework(Base):
+class HomeworkModel(Base):
     __tablename__ = "homeworks"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -15,6 +15,6 @@ class Homework(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    group = relationship("Group", back_populates="homeworks")
-    assigner = relationship("User", back_populates="assigned_homeworks")
-    attachments = relationship("Attachment", back_populates="homework")
+    group = relationship("GroupModel", back_populates="homeworks")
+    assigner = relationship("UserModel", back_populates="assigned_homeworks")
+    attachments = relationship("AttachmentModel", back_populates="homework")

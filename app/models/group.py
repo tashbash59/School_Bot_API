@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database import Base
 
-class Group(Base):
+class GroupModel(Base):
     __tablename__ = "groups"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -13,6 +13,6 @@ class Group(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
-    creator = relationship("User", back_populates="created_groups")
-    homeworks = relationship("Homework", back_populates="group")
-    user_groups = relationship("UserGroup", back_populates="group")
+    creator = relationship("UserModel", back_populates="created_groups")
+    homeworks = relationship("HomeworkModel", back_populates="group")
+    user_groups = relationship("UserGroupModel", back_populates="group")

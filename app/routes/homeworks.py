@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.homework import Homework
+from app.models.homework import HomeworkModel
 from app.schemas.homework import HomeworkCreate, Homework, HomeworkUpdate
 
 router = APIRouter(prefix="/homeworks", tags=["homeworks"])
@@ -30,7 +30,7 @@ router = APIRouter(prefix="/homeworks", tags=["homeworks"])
     """
 )
 def create_homework(homework: HomeworkCreate, db: Session = Depends(get_db)):
-    db_homework = Homework(**homework.dict())
+    db_homework = HomeworkModel(**homework.dict())
     db.add(db_homework)
     db.commit()
     db.refresh(db_homework)
@@ -59,7 +59,7 @@ def create_homework(homework: HomeworkCreate, db: Session = Depends(get_db)):
     """
 )
 def read_homeworks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    homeworks = db.query(Homework).offset(skip).limit(limit).all()
+    homeworks = db.query(HomeworkModel).offset(skip).limit(limit).all()
     return homeworks
 
 @router.get(
@@ -87,7 +87,7 @@ def read_homeworks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     """
 )
 def read_homework(homework_id: int, db: Session = Depends(get_db)):
-    db_homework = db.query(Homework).filter(Homework.id == homework_id).first()
+    db_homework = db.query(HomeworkModel).filter(HomeworkModel.id == homework_id).first()
     if db_homework is None:
         raise HTTPException(status_code=404, detail="Homework not found")
     return db_homework
@@ -102,7 +102,7 @@ def read_homework(homework_id: int, db: Session = Depends(get_db)):
     **Параметры пути:**
     - group_id: Идентификатор группы, для которой нужно получить задания
     
-    **Возвращает:**
+    **Возвращает:"
     - Список объектов домашних заданий, принадлежащих указанной группе
     
     **Использование:**
@@ -115,7 +115,7 @@ def read_homework(homework_id: int, db: Session = Depends(get_db)):
     """
 )
 def read_group_homeworks(group_id: int, db: Session = Depends(get_db)):
-    homeworks = db.query(Homework).filter(Homework.group_id == group_id).all()
+    homeworks = db.query(HomeworkModel).filter(HomeworkModel.group_id == group_id).all()
     return homeworks
 
 @router.put(
@@ -147,7 +147,7 @@ def read_group_homeworks(group_id: int, db: Session = Depends(get_db)):
     """
 )
 def update_homework(homework_id: int, homework: HomeworkUpdate, db: Session = Depends(get_db)):
-    db_homework = db.query(Homework).filter(Homework.id == homework_id).first()
+    db_homework = db.query(HomeworkModel).filter(HomeworkModel.id == homework_id).first()
     if db_homework is None:
         raise HTTPException(status_code=404, detail="Homework not found")
     
@@ -186,7 +186,7 @@ def update_homework(homework_id: int, homework: HomeworkUpdate, db: Session = De
     """
 )
 def delete_homework(homework_id: int, db: Session = Depends(get_db)):
-    db_homework = db.query(Homework).filter(Homework.id == homework_id).first()
+    db_homework = db.query(HomeworkModel).filter(HomeworkModel.id == homework_id).first()
     if db_homework is None:
         raise HTTPException(status_code=404, detail="Homework not found")
     

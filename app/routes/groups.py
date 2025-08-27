@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.group import Group
+from app.models.group import GroupModel
 from app.schemas.group import GroupCreate, Group, GroupUpdate
 
 router = APIRouter(prefix="/groups", tags=["groups"])
@@ -32,11 +32,11 @@ router = APIRouter(prefix="/groups", tags=["groups"])
     """
 )
 def create_group(group: GroupCreate, db: Session = Depends(get_db)):
-    db_group = db.query(Group).filter(Group.name == group.name).first()
+    db_group = db.query(GroupModel).filter(GroupModel.name == group.name).first()
     if db_group:
         raise HTTPException(status_code=400, detail="Group already exists")
     
-    db_group = Group(**group.dict())
+    db_group = GroupModel(**group.dict())
     db.add(db_group)
     db.commit()
     db.refresh(db_group)
@@ -65,7 +65,7 @@ def create_group(group: GroupCreate, db: Session = Depends(get_db)):
     """
 )
 def read_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    groups = db.query(Group).offset(skip).limit(limit).all()
+    groups = db.query(GroupModel).offset(skip).limit(limit).all()
     return groups
 
 @router.get(
@@ -93,7 +93,7 @@ def read_groups(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
 )
 def read_group(group_id: int, db: Session = Depends(get_db)):
-    db_group = db.query(Group).filter(Group.id == group_id).first()
+    db_group = db.query(GroupModel).filter(GroupModel.id == group_id).first()
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     return db_group
@@ -127,7 +127,7 @@ def read_group(group_id: int, db: Session = Depends(get_db)):
     """
 )
 def update_group(group_id: int, group: GroupUpdate, db: Session = Depends(get_db)):
-    db_group = db.query(Group).filter(Group.id == group_id).first()
+    db_group = db.query(GroupModel).filter(GroupModel.id == group_id).first()
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     
@@ -154,7 +154,7 @@ def update_group(group_id: int, group: GroupUpdate, db: Session = Depends(get_db
     **Возвращает:**
     - Сообщение об успешном удалении
     
-    **Ошибки:**
+    **Ошибки:"
     - 404: Группа с указанным ID не найдена
     
     **Использование:**
@@ -166,7 +166,7 @@ def update_group(group_id: int, group: GroupUpdate, db: Session = Depends(get_db
     """
 )
 def delete_group(group_id: int, db: Session = Depends(get_db)):
-    db_group = db.query(Group).filter(Group.id == group_id).first()
+    db_group = db.query(GroupModel).filter(GroupModel.id == group_id).first()
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
     
